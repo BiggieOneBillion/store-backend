@@ -5,15 +5,25 @@ const { toJSON, paginate } = require("../../../utils/plugins");
 const productSchema = mongoose.Schema({
   name: { type: String, required: true },
   description: { type: String, required: true },
-  store: { type: mongoose.Schema.Types.ObjectId, ref: "Store", required: true },
+  // store: { type: mongoose.Schema.Types.ObjectId, ref: "Store", required: true },
   category: { type: String, required: true },
+  tag: {
+    type: String,
+    enum: ["latest", "featured", "regular", "sale"],
+    default: "regular",
+  },
   price: { type: Number, required: true },
   compareAtPrice: { type: Number },
-  images: [String],
-  inventory: {
-    quantity: { type: Number, required: true },
-    sku: { type: String, required: true },
-    lowStockThreshold: { type: Number, default: 5 },
+  discount: {
+    type: {
+      type: String,
+      enum: ['percentage', 'fixed'],
+      default: 'percentage'
+    },
+    value: { type: Number, default: 0 },
+    startDate: Date,
+    endDate: Date,
+    active: { type: Boolean, default: false }
   },
   variants: [
     {
@@ -22,8 +32,34 @@ const productSchema = mongoose.Schema({
       price: Number,
       quantity: Number,
       sku: String,
-    },
+      discount: {
+        type: {
+          type: String,
+          enum: ['percentage', 'fixed'],
+          default: 'percentage'
+        },
+        value: { type: Number, default: 0 },
+        startDate: Date,
+        endDate: Date,
+        active: { type: Boolean, default: false }
+      }
+    }
   ],
+  images: [String],
+  inventory: {
+    quantity: { type: Number, required: true },
+    sku: { type: String, required: true },
+    lowStockThreshold: { type: Number, default: 5 },
+  },
+  // variants: [
+  //   {
+  //     name: String,
+  //     options: [String],
+  //     price: Number,
+  //     quantity: Number,
+  //     sku: String,
+  //   },
+  // ],
   specifications: [
     {
       name: String,

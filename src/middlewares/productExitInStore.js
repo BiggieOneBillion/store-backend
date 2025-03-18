@@ -4,7 +4,7 @@ const Product = require("../features/v1/product/product.model");
 
 const productExistInStore = () => async (req, res, next) => {
   const product = await Product.findOne({
-    store: req.store._id,
+    // store: req.store._id,
     _id: req.params.productId,
   });
   if (!product) {

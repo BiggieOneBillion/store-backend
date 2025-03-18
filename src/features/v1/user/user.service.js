@@ -38,6 +38,10 @@ const getUserById = async (id) => {
   return User.findById(id);
 };
 
+const getAllUsers = async () => {
+  return User.find({ role: "buyer" });
+};
+
 /**
  * Get user by email
  * @param {string} email
@@ -87,4 +91,5 @@ module.exports = {
   getUserByEmail,
   updateUserById,
   deleteUserById,
+  getAllUsers,
 };

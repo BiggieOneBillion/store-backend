@@ -21,6 +21,11 @@ const getOrders = catchAsync(async (req, res) => {
   res.send(result);
 });
 
+const getAllOrder = catchAsync(async (req, res) => {
+  const result = await orderService.getAllOrder();
+  res.send(result);
+})
+
 // get all orders that belong to store
 const getAllOrdersByStore = catchAsync(async (req, res) => {
   // check if user has store
@@ -47,7 +52,7 @@ const getOrder = catchAsync(async (req, res) => {
 });
 
 const getUserOrderList = catchAsync(async (req, res) => {
-  console.log("-------------request-------------", req.user._id)
+  // console.log("-------------request-------------", req.user._id)
   const getUserOrders = await orderService.getUserOrder(req.user._id);
   if (!getUserOrders) {
     throw new ApiError(httpStatus.NOT_FOUND, "Order not found");
@@ -76,5 +81,6 @@ module.exports = {
   updateOrder,
   deleteOrder,
   getAllOrdersByStore,
-  getUserOrderList
+  getUserOrderList,
+  getAllOrder
 };

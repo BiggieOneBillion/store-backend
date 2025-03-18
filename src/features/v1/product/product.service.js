@@ -17,8 +17,12 @@ const queryProducts = async (filter, options) => {
   return products;
 };
 
-const getAllProducts = async (id) => {
-  return Product.find({ store: id });
+// const getAllProducts = async (id) => {
+//   return Product.find({ store: id });
+// };
+
+const getAllProducts = async () => {
+  return Product.find();
 };
 
 const getAllStoreProducts = async () => {

@@ -14,7 +14,7 @@ const createProduct = catchAsync(async (req, res) => {
     }
     const product = await productService.createProduct({
       ...req.body,
-      store: req.store._id,
+      // store: req.store._id,
       images: [upload.secure_url],
     });
     res.status(httpStatus.CREATED).send(product);
@@ -22,7 +22,7 @@ const createProduct = catchAsync(async (req, res) => {
   }
   const product = await productService.createProduct({
     ...req.body,
-    store: req.store._id,
+    // store: req.store._id,
   });
   res.status(httpStatus.CREATED).send(product);
 });
@@ -41,7 +41,7 @@ const getProducts = catchAsync(async (req, res) => {
 });
 
 const getAllProducts = catchAsync(async (req, res) => {
-  const products = await productService.getAllProducts(req.store._id);
+  const products = await productService.getAllProducts();
   res.send(products);
 });
 

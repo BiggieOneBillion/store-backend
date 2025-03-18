@@ -9,7 +9,7 @@ const createOrder = {
       .items(
         Joi.object().keys({
           product: Joi.string().custom(objectId).required(),
-          store: Joi.string().custom(objectId).required(),
+          // store: Joi.string().custom(objectId).required(),
           quantity: Joi.number().integer().required().min(1),
           variant: Joi.object().keys({
             name: Joi.string(),
@@ -44,7 +44,7 @@ const getOrders = {
       "delivered",
       "cancelled"
     ),
-    store: Joi.string().custom(objectId),
+    // store: Joi.string().custom(objectId),
     sortBy: Joi.string(),
     limit: Joi.number().integer(),
     page: Joi.number().integer(),
@@ -53,7 +53,7 @@ const getOrders = {
 
 const getOrder = {
   params: Joi.object().keys({
-    storeId: Joi.string().custom(objectId),
+    userId: Joi.string().custom(objectId),
   }),
 };
 
@@ -84,6 +84,7 @@ const updateOrder = {
 const deleteOrder = {
   params: Joi.object().keys({
     orderId: Joi.string().custom(objectId),
+    userId: Joi.string().custom(objectId),
   }),
 };
 

@@ -10,11 +10,11 @@ const orderSchema = mongoose.Schema({
         ref: "Product",
         required: true,
       },
-      store: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Store",
-        required: true,
-      },
+      // store: {
+      //   type: mongoose.Schema.Types.ObjectId,
+      //   ref: "Store",
+      //   required: true,
+      // },
       quantity: { type: Number, required: true },
       price: { type: Number, required: true },
       variant: {

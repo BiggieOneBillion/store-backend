@@ -7,6 +7,7 @@ const { storeRoute } = require("../../features/v1/store/index");
 const { productRoute } = require("../../features/v1/product/index");
 const { wishlistRoute } = require("../../features/v1/wishlist/index");
 const { orderRoute } = require("../../features/v1/order/index");
+const paymentRoute = require("../../features/v1/payment/payment.route");
 const paystackRoute = require("../../features/v1/payment/paystack/paystack.route");
 
 const router = express.Router();
@@ -39,6 +40,10 @@ const defaultRoutes = [
   {
     path: "/order",
     route: orderRoute,
+  },
+  {
+    path: "/payment",
+    route: paymentRoute,
   },
 ];
 

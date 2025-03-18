@@ -16,16 +16,16 @@ router
   .route("/:userId")
   .post(
     // CREATE PRODUCT
-    auth("getUsers"),
+    auth("manageUsers"),
     validateFormData(productValidation.createProduct),
-    getStore(),
+    // getStore(),
     productController.createProduct
   )
   .get(
     // GET ALL PRODUCTS IN USER STORE
     auth("getUsers"),
     validate(productValidation.getAllProducts),
-    getStore(),
+    // getStore(),
     productController.getAllProducts
   );
 
@@ -33,26 +33,26 @@ router
   .route("/:userId/:productId")
   .get(
     // GET SINGLE PRODUCT BY ID
-    auth("getUsers"), // is user allowed to access this endpoint
+    auth("manageUsers"), // is user allowed to access this endpoint
     validate(productValidation.getProduct), // validate the body data
-    getStore(), // check if user has a store
+    // getStore(), // check if user has a store
     productExistInStore(), // check if the product exist in the store
     productController.getProduct // get the product from the store and return it
   )
   .patch(
     // UPDATE SINGLE PRODUCT BY ID
-    auth("getUsers"), // is user allowed to access this endpoint
+    auth("manageUsers"), // is user allowed to access this endpoint
     validate(productValidation.productParams),
     validateFormData(productValidation.updateProduct), // validate the body data
-    getStore(), // check if user has a store
+    // getStore(), // check if user has a store
     productExistInStore(), // check if the product exist in the store
     productController.updateProduct // update the product
   )
   .delete(
     // DELETE SINGLE PRODUCT BY ID
-    auth("getUsers"),
+    auth("manageUsers"),
     validate(productValidation.deleteProduct),
-    getStore(),
+    // getStore(),
     productExistInStore(),
     productController.deleteProduct
   );
