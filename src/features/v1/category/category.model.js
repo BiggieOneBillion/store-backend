@@ -34,8 +34,14 @@ const categorySchema = mongoose.Schema({
     type: Boolean,
     default: false
   },
-  metaTitle: String,
-  metaDescription: String,
+  metaTitle: {
+    type: String,
+    required: false
+  },
+  metaDescription: {
+    type: String,
+    required: false
+  },
   order: {
     type: Number,
     default: 0
