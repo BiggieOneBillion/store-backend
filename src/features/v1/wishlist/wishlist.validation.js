@@ -4,7 +4,6 @@ const { objectId } = require("../../../validations/custom.validation");
 const addToWishlist = {
   body: Joi.object().keys({
     productId: Joi.string().custom(objectId).required(),
-    storeId: Joi.string().custom(objectId).required()
   })
 };
 
@@ -27,7 +26,7 @@ const getWishlist = {
 const removeFromWishlist = {
   params: Joi.object().keys({
     productId: Joi.string().custom(objectId).required(),
-    storeId: Joi.string().custom(objectId).required()
+    // storeId: Joi.string().custom(objectId).required()
   })
 };
 

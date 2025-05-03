@@ -46,7 +46,7 @@ const getAllProducts = catchAsync(async (req, res) => {
 });
 
 const getAllStoreProducts = catchAsync(async (req, res) => {
-  const products = await productService.getAllStoreProducts()
+  const products = await productService.getAllStoreProducts();
   res.send(products);
 });
 
@@ -58,6 +58,15 @@ const getProduct = catchAsync(async (req, res) => {
   res.send(product);
 });
 
+const getRelatedProducts = catchAsync(async (req, res) => {
+  const products = await productService.getRelatedProducts(
+    req.params.categoryId, // note this is the category id not the name
+    req.params.productId
+  );
+  // console.log(products)
+  res.send(products);
+});
+
 const updateProduct = catchAsync(async (req, res) => {
   const product = await productService.updateProductById(
     req.params.productId,
@@ -67,6 +76,7 @@ const updateProduct = catchAsync(async (req, res) => {
 });
 
 const deleteProduct = catchAsync(async (req, res) => {
+  // console.log("ASS HOLE PROGRAM")
   await productService.deleteProductById(req.params.productId);
   res.status(httpStatus.NO_CONTENT).send();
 });
@@ -78,5 +88,6 @@ module.exports = {
   updateProduct,
   deleteProduct,
   getAllProducts,
-  getAllStoreProducts
+  getAllStoreProducts,
+  getRelatedProducts,
 };

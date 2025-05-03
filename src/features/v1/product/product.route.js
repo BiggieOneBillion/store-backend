@@ -10,6 +10,10 @@ const router = express.Router();
 
 // GET ALL PRODUCTS FROM ALL STORES.
 router.route("/").get(productController.getAllStoreProducts);
+router.route("/detail/:productId").get(productController.getProduct);
+router
+  .route("/related/:productId/:categoryId")
+  .get(productController.getRelatedProducts);
 
 // api route for owner of store to perform CRUD operations on their products
 router
@@ -51,9 +55,9 @@ router
   .delete(
     // DELETE SINGLE PRODUCT BY ID
     auth("manageUsers"),
-    validate(productValidation.deleteProduct),
+    // validate(productValidation.deleteProduct),
     // getStore(),
-    productExistInStore(),
+    // productExistInStore(),
     productController.deleteProduct
   );
 

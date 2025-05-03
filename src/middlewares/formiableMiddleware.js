@@ -17,7 +17,7 @@ const formidableMiddleware = (req, res, next) => {
 
     req.fields = fields; // Store text fields in req
     req.files = files; // Store uploaded files in req
-    console.log("FROM FORMIABLE", fields)
+    // console.log("FROM FORMIABLE", fields)
     next(); // Continue to the next middleware or route handler
   });
 };

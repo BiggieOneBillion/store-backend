@@ -14,15 +14,15 @@ const verifyCallback =
 
     if (requiredRights.length) {
       const userRights = roleRights.get(user.role);
-      console.log(requiredRights)
-      console.log(userRights)
+      // console.log(requiredRights)
+      // console.log(userRights)
       const hasRequiredRights = requiredRights.every((requiredRight) =>
         userRights.includes(requiredRight)
       );
-      console.log(hasRequiredRights)
-      console.log("DATA", req.body)
+      // console.log(hasRequiredRights)
+      // console.log("DATA", req.body)
       if (!hasRequiredRights) {
-        console.log("IS FORBIDDEN")
+        // console.log("IS FORBIDDEN")
         return reject(new ApiError(httpStatus.FORBIDDEN, "Forbidden"));
       }
     }

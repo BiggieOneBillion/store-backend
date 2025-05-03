@@ -44,7 +44,7 @@ const paystackController = {
       { new: true }
     );
 
-    console.log("ORDER INFO----", order);
+    // console.log("ORDER INFO----", order);
     // if (!order) {
     //   throw new ApiError(httpStatus.NOT_FOUND, "Order not found");
     // }

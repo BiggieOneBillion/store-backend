@@ -4,6 +4,15 @@ const Order = require("./order.model");
 const { productService } = require("../product/index");
 const { paystackService } = require("../payment/paystack/index");
 const mongoose = require("mongoose");
+const { discountService } = require("../discount");
+const stockHistoryService = require("../inventory/stockHistory.service");
+const Payment = require("../payment/payment.model");
+
+const generateReferenceId = (type) => {
+  const prefix = type.slice(0, 3).toUpperCase();
+  const randomNum = Math.floor(1000 + Math.random() * 9000); // generates 4-digit number
+  return `${prefix}-${randomNum}`;
+};
 
 // Order Service
 const createOrder = async (orderBody) => {
@@ -23,12 +32,43 @@ const createOrder = async (orderBody) => {
         `Insufficient inventory for product ${item.product}`
       );
     }
+
+    singleProduct.inventory.quantity -= item.quantity;
+    singleProduct.inventory.sold += item.quantity;
+    await singleProduct.save();
+
     productArr.push({
       product: singleProduct.id,
-      store: singleProduct.store.toString(),
+      // store: singleProduct.store.toString(),
       quantity: item.quantity,
       price: singleProduct.price,
     });
+  }
+
+  let orderTotal = productArr.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0
+  );
+
+  // Apply discount if code provided
+  let discountDetails = null;
+  if (orderBody.discountCode) {
+    const discount = await discountService.validateDiscount(
+      orderBody.discountCode,
+      orderBody.buyer,
+      orderTotal
+    );
+
+    const discountAmount = discount.calculateDiscount(orderTotal);
+    orderTotal -= discountAmount;
+
+    discountDetails = {
+      code: discount.code,
+      type: discount.type,
+      value: discount.value,
+      amount: discountAmount,
+      discountId: discount._id,
+    };
   }
 
   // Create order with initial status pending
@@ -39,10 +79,13 @@ const createOrder = async (orderBody) => {
     payment: {
       status: "pending",
     },
-    total: productArr.reduce(
+    subtotal: productArr.reduce(
       (acc, item) => acc + item.price * item.quantity,
       0
     ),
+    appliedDiscount: discountDetails,
+    discountedTotal: orderTotal,
+    total: orderTotal,
   });
 
   // Initialize Paystack payment
@@ -51,6 +94,20 @@ const createOrder = async (orderBody) => {
     orderBody.buyer
   );
 
+  // Record stock changes for each item
+  for (const item of productArr) {
+    // console.log("FROM ORDERS----------", item.quantity);
+    await stockHistoryService.createStockEntry({
+      product: item.product,
+      type: "sale",
+      quantity: -item.quantity,
+      reference: generateReferenceId("order"),
+      referenceType: "order",
+      referenceId: order._id,
+      notes: `Stock reduction from order`,
+      performedBy: orderBody.buyer,
+    });
+  }
   // console.log("PAYSTACK------", paystackData);
 
   // Update order with payment reference
@@ -63,6 +120,116 @@ const createOrder = async (orderBody) => {
   };
 
   // // return Order.create(orderBody);
+};
+
+const createOrderfromMobile = async (orderBody) => {
+  // console.log("ORDER FROM MOBILE", orderBody)
+  // Verify products exist and have sufficient inventory
+  const productArr = [];
+  for (const item of orderBody.items) {
+    const singleProduct = await productService.getProductById(item.product);
+    if (!singleProduct) {
+      throw new ApiError(
+        httpStatus.BAD_REQUEST,
+        `Product ${item.product} not found`
+      );
+    }
+    if (singleProduct.inventory.quantity < item.quantity) {
+      throw new ApiError(
+        httpStatus.BAD_REQUEST,
+        `Insufficient inventory for product ${item.product}`
+      );
+    }
+
+    singleProduct.inventory.quantity -= item.quantity;
+    singleProduct.inventory.sold += item.quantity;
+    await singleProduct.save();
+
+    productArr.push({
+      product: singleProduct.id,
+      // store: singleProduct.store.toString(),
+      quantity: item.quantity,
+      price: singleProduct.price,
+    });
+  }
+
+  let orderTotal = productArr.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0
+  );
+
+  // Apply discount if code provided
+  let discountDetails = null;
+  if (orderBody.discountCode) {
+    const discount = await discountService.validateDiscount(
+      orderBody.discountCode,
+      orderBody.buyer,
+      orderTotal
+    );
+
+    const discountAmount = discount.calculateDiscount(orderTotal);
+    orderTotal -= discountAmount;
+
+    discountDetails = {
+      code: discount.code,
+      type: discount.type,
+      value: discount.value,
+      amount: discountAmount,
+      discountId: discount._id,
+    };
+  }
+
+  // Create order with initial status pending
+  const order = await Order.create({
+    ...orderBody,
+    items: productArr,
+    status: "processing",
+    subtotal: productArr.reduce(
+      (acc, item) => acc + item.price * item.quantity,
+      0
+    ),
+    appliedDiscount: discountDetails,
+    discountedTotal: orderTotal,
+    total: orderTotal,
+  });
+
+  // Initialize Paystack payment
+  await Payment.create({
+    order: order._id || order.id,
+    user: orderBody.buyer,
+    amount: order.total,
+    reference: orderBody.payment.reference,
+    paymentDetails: {
+      authorization_url: orderBody.payment.authorization_url,
+      access_code: orderBody.payment.access_code || "",
+    },
+    metadata: {
+      orderId: order.id,
+      userId: orderBody.buyer.toString(),
+    },
+  });
+
+  // Record stock changes for each item
+  for (const item of productArr) {
+    await stockHistoryService.createStockEntry({
+      product: item.product,
+      type: "sale",
+      quantity: -item.quantity,
+      reference: generateReferenceId("order"),
+      referenceType: "order",
+      referenceId: order._id,
+      notes: `Stock reduction from order`,
+      performedBy: orderBody.buyer,
+    });
+  }
+
+  // Update order with payment reference
+  // order.payment.reference = paystackData.reference;
+  await order.save();
+
+  return {
+    order,
+  };
 };
 
 const queryOrders = async (filter, options) => {
@@ -253,6 +420,7 @@ const deleteOrderById = async (orderId) => {
 module.exports = {
   // Order Service
   createOrder,
+  createOrderfromMobile,
   queryOrders,
   getOrderById,
   updateOrderById,
@@ -260,5 +428,5 @@ module.exports = {
   getAllOrdersByStore,
   testWork,
   getUserOrder,
-  getAllOrder
+  getAllOrder,
 };

@@ -16,7 +16,7 @@ router
   .get(auth("getUsers"), orderController.getAllOrder);
 
 router.route("/:userId").get(
-  // get all order
+  // get all users order
   auth("getUsers"),
   validate(orderValidation.getOrder),
   orderController.getUserOrderList

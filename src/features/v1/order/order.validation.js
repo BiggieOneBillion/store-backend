@@ -27,6 +27,23 @@ const createOrder = {
         zipCode: Joi.string().required(),
       })
       .required(),
+    status: Joi.string().optional(),
+    payment: Joi.object()
+      .keys({
+        reference: Joi.string().optional(),
+        status: Joi.string().valid("pending", "success", "failed").optional(),
+        amount: Joi.number().optional(),
+        paymentDate: Joi.string().optional(),
+        gateway: Joi.string()
+          .valid("paystack", "flutterwave")
+          .default("paystack")
+          .optional(),
+        attempts: Joi.number().integer().default(0).optional(),
+        lastAttempt: Joi.string().optional(),
+        authorization_url: Joi.string().optional(),
+        transaction_id: Joi.string().optional(),
+      })
+      .optional(),
     // subtotal: Joi.number().required().min(0),
     // shippingCost: Joi.number().required().min(0),
     // tax: Joi.number().required().min(0),

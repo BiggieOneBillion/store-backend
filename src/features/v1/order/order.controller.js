@@ -7,7 +7,16 @@ const { storeService } = require("../store/index");
 
 // Order Controllers
 const createOrder = catchAsync(async (req, res) => {
-  const newOrder = await orderService.createOrder({
+  let newOrder;
+  if (req.deviceInfo.isMobile) {
+    newOrder = await orderService.createOrderfromMobile({
+      ...req.body,
+      buyer: req.user.id,
+    });
+    res.status(httpStatus.CREATED).send(newOrder);
+    return;
+  }
+  newOrder = await orderService.createOrder({
     ...req.body,
     buyer: req.user.id,
   });
@@ -23,8 +32,9 @@ const getOrders = catchAsync(async (req, res) => {
 
 const getAllOrder = catchAsync(async (req, res) => {
   const result = await orderService.getAllOrder();
+  console.log("---RESULTS---", result);
   res.send(result);
-})
+});
 
 // get all orders that belong to store
 const getAllOrdersByStore = catchAsync(async (req, res) => {
@@ -43,7 +53,6 @@ const getAllOrdersByStore = catchAsync(async (req, res) => {
 });
 
 const getOrder = catchAsync(async (req, res) => {
-
   const singleOrder = await orderService.getOrderById(req.params.orderId);
   if (!singleOrder) {
     throw new ApiError(httpStatus.NOT_FOUND, "Order not found");
@@ -82,5 +91,5 @@ module.exports = {
   deleteOrder,
   getAllOrdersByStore,
   getUserOrderList,
-  getAllOrder
+  getAllOrder,
 };

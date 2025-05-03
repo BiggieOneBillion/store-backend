@@ -1,6 +1,7 @@
-const httpStatus = require('http-status');
-const catchAsync = require('../../../utils/catchAsync');
-const { discountService } = require('./index');
+const httpStatus = require("http-status");
+const catchAsync = require("../../../utils/catchAsync");
+// const { discountService } = require('./index');
+const discountService = require("../discount/discount.service");
 
 const discountController = {
   createDiscount: catchAsync(async (req, res) => {
@@ -15,6 +16,11 @@ const discountController = {
     res.send(result);
   }),
 
+  getAllDiscounts: catchAsync(async (req, res) => {
+    const result = await discountService.getAllDiscounts();
+    res.send(result);
+  }),
+
   getDiscountByCode: catchAsync(async (req, res) => {
     const discount = await discountService.getDiscountByCode(req.params.code);
     res.send(discount);
@@ -22,7 +28,11 @@ const discountController = {
 
   validateDiscount: catchAsync(async (req, res) => {
     const { code, cartTotal } = req.body;
-    const discount = await discountService.validateDiscount(code, req.user.id, cartTotal);
+    const discount = await discountService.validateDiscount(
+      code,
+      req.user.id,
+      cartTotal
+    );
     res.send(discount);
   }),
 
@@ -55,6 +65,14 @@ const discountController = {
     const discount = await discountService.updateDiscount(
       req.params.discountId,
       req.body
+    );
+    res.send(discount);
+  }),
+
+  updateDiscountStatus: catchAsync(async (req, res) => {
+    const discount = await discountService.updateDiscountStatus(
+      req.params.discountId,
+      req.body.active
     );
     res.send(discount);
   }),

@@ -14,6 +14,7 @@ const routes = require("./routes/v1");
 const { errorConverter, errorHandler } = require("./middlewares/error");
 const ApiError = require("./utils/ApiError");
 const fileUpload = require("express-fileupload");
+const deviceDetector = require("./middlewares/deviceDetector");
 // const formidableMiddleware = require("./middlewares/formiableMiddleware");
 
 const app = express();
@@ -53,7 +54,16 @@ app.use(compression());
 // enable cors
 app.use(cors());
 app.options("*", cors());
-
+// app.use(cors({
+//   origin: '*',
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+//   allowedHeaders: ['Content-Type', 'Authorization'],
+//   credentials: true,
+//   exposedHeaders: ['Content-Range', 'X-Content-Range']
+// }));
+// app.options('*', cors());
+// detect device
+app.use(deviceDetector);
 
 // jwt authentication
 app.use(passport.initialize());

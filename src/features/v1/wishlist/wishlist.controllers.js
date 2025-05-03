@@ -32,13 +32,13 @@ const removeFromWishlist = catchAsync(async (req, res) => {
   const wishlist = await wishlistService.removeFromWishlist(
     req.user.id,
     req.params.productId,
-    req.params.storeId
+    // req.params.storeId
   );
   res.send(wishlist);
 });
 
 const clearWishlist = catchAsync(async (req, res) => {
-
+  //  console.log("------------PASSES-------------")
   await wishlistService.clearWishlist(req.user._id);
   res.status(httpStatus.NO_CONTENT).send();
 });

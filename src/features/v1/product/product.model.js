@@ -6,7 +6,11 @@ const productSchema = mongoose.Schema({
   name: { type: String, required: true },
   description: { type: String, required: true },
   // store: { type: mongoose.Schema.Types.ObjectId, ref: "Store", required: true },
-  category: { type: String, required: true },
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Category",
+    required: true,
+  },
   tag: {
     type: String,
     enum: ["latest", "featured", "regular", "sale"],
@@ -17,13 +21,13 @@ const productSchema = mongoose.Schema({
   discount: {
     type: {
       type: String,
-      enum: ['percentage', 'fixed'],
-      default: 'percentage'
+      enum: ["percentage", "fixed"],
+      default: "percentage",
     },
     value: { type: Number, default: 0 },
     startDate: Date,
     endDate: Date,
-    active: { type: Boolean, default: false }
+    active: { type: Boolean, default: false },
   },
   variants: [
     {
@@ -35,21 +39,22 @@ const productSchema = mongoose.Schema({
       discount: {
         type: {
           type: String,
-          enum: ['percentage', 'fixed'],
-          default: 'percentage'
+          enum: ["percentage", "fixed"],
+          default: "percentage",
         },
         value: { type: Number, default: 0 },
         startDate: Date,
         endDate: Date,
-        active: { type: Boolean, default: false }
-      }
-    }
+        active: { type: Boolean, default: false },
+      },
+    },
   ],
   images: [String],
   inventory: {
     quantity: { type: Number, required: true },
     sku: { type: String, required: true },
     lowStockThreshold: { type: Number, default: 5 },
+    sold: { type: Number, default: 0 },
   },
   // variants: [
   //   {
@@ -68,7 +73,7 @@ const productSchema = mongoose.Schema({
   ],
   status: {
     type: String,
-    enum: ["active", "inactive", "out_of_stock"],
+    enum: ["active", "inactive", "out_of_stock", "deactivated"],
     default: "active",
   },
   rating: { type: Number, default: 0 },

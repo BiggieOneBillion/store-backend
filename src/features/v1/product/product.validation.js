@@ -6,6 +6,7 @@ const createProduct = {
     name: Joi.string().required(),
     description: Joi.string().required(),
     category: Joi.string().required(),
+    tag: Joi.string().required(),
     price: Joi.number().required().min(0),
     compareAtPrice: Joi.number().min(0),
     images: Joi.array().items(Joi.any().meta({ swaggerType: "file" })),
@@ -67,6 +68,7 @@ const updateProduct = {
       description: Joi.string(),
       category: Joi.string(),
       price: Joi.number().min(0),
+      tag: Joi.string(),
       compareAtPrice: Joi.number().min(0),
       images: Joi.array().items(Joi.string()),
       inventory: Joi.object().keys({

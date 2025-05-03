@@ -29,7 +29,7 @@ router.route("/:wishlistId").get(
 );
 
 // Route for removing specific product from wishlist
-router.route("/:productId/:storeId").delete(
+router.route("/:productId/clear").delete(
   auth("getUsers"), // Verify user authentication
   validate(wishlistValidation.removeFromWishlist), // Validate productId and storeId parameters
   wishlistController.removeFromWishlist
