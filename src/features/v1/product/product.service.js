@@ -2,6 +2,7 @@ const httpStatus = require("http-status");
 const Product = require("./product.model");
 const ApiError = require("../../../utils/ApiError");
 const mongoose = require("mongoose");
+const filterRequest = require("./req-filter");
 
 // Product Service
 
@@ -36,6 +37,20 @@ const getRelatedProducts = async (category, id) => {
 
 const createProduct = async (productBody) => {
   return Product.create(productBody);
+};
+
+const filterProducts = async (req) => {
+  const { options, filter } = filterRequest(req);
+  return await Product.paginate(filter, options);
+};
+
+const partialFilteringOfProducts = async (req) => {
+  const rx = new RegExp(req.query.name, "i");
+  // console.log("REGEX", rx);
+  return await Product.findOne({ name: rx }).populate({
+    path: "category",
+    select: "name id",
+  });
 };
 
 const queryProducts = async (filter, options) => {
@@ -95,4 +110,6 @@ module.exports = {
   getAllProducts,
   getAllStoreProducts,
   getRelatedProducts,
+  filterProducts,
+  partialFilteringOfProducts,
 };

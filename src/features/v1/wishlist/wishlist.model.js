@@ -34,6 +34,5 @@ const wishlistSchema = new mongoose.Schema(
 // Index for faster queries
 wishlistSchema.index({ user: 1 });
 
-const Wishlist = mongoose.model("Wishlist", wishlistSchema);
-
-module.exports = Wishlist;
+module.exports =
+  mongoose.models.Wishlist || mongoose.model("Wishlist", wishlistSchema);

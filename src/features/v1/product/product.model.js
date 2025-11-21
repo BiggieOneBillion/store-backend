@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { toJSON, paginate } = require("../../../utils/plugins");
+const mongoosePaginate = require("mongoose-paginate-v2");
 
 // Product Schema
 const productSchema = mongoose.Schema({
@@ -82,9 +83,24 @@ const productSchema = mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 
+productSchema.index({
+  name: "text",
+  description: "text",
+  category: "text",
+  "specifications.name": "text",
+  "specifications.value": "text",
+  "variants.name": "text",
+  "variants.options": "text",
+});
+
+productSchema.index({ category: 1, price: 1 });
+productSchema.index({ "inventory.sku": 1 });
+
+productSchema.plugin(mongoosePaginate);
+
 // add plugin that converts mongoose to json
 productSchema.plugin(toJSON);
-productSchema.plugin(paginate);
+// productSchema.plugin(paginate);
 
 const Product = mongoose.model("Product", productSchema);
 

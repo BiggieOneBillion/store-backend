@@ -61,7 +61,7 @@ categorySchema.plugin(toJSON);
 categorySchema.plugin(paginate);
 
 // Add index for better query performance
-categorySchema.index({ slug: 1 });
+// Note: slug already has unique index from schema definition
 categorySchema.index({ parent: 1 });
 categorySchema.index({ status: 1 });
 

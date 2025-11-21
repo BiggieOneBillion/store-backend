@@ -16,6 +16,7 @@ const createOrder = catchAsync(async (req, res) => {
     res.status(httpStatus.CREATED).send(newOrder);
     return;
   }
+  console.log("CREATE ORDER DETAILS---", req.body);
   newOrder = await orderService.createOrder({
     ...req.body,
     buyer: req.user.id,
@@ -32,7 +33,7 @@ const getOrders = catchAsync(async (req, res) => {
 
 const getAllOrder = catchAsync(async (req, res) => {
   const result = await orderService.getAllOrder();
-  console.log("---RESULTS---", result);
+  // console.log("---RESULTS---", result);
   res.send(result);
 });
 

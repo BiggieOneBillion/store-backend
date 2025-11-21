@@ -50,7 +50,6 @@ const getUserWishlist = async (userId) => {
       products: []
     };
   }
-
   // If exists
   const wishlist = await WishList.findOne({ user: userId })
     .populate({

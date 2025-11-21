@@ -12,6 +12,8 @@ const paystackRoute = require("../../features/v1/payment/paystack/paystack.route
 const discountRoute = require("../../features/v1/discount/discount.route");
 const categoryRoute = require("../../features/v1/category/category.route");
 const stockHistoryRoute = require("../../features/v1/inventory/stockHistory.route");
+const userAddressRoute = require("../../features/v1/useraddress/useraddress.route");
+const otpTokenRoute = require("../../features/v1/otp-token/otp-token.route");
 
 const router = express.Router();
 
@@ -59,7 +61,15 @@ const defaultRoutes = [
   {
     path: "/stock-history",
     route: stockHistoryRoute,
-  }
+  },
+  {
+    path: "/user-address",
+    route: userAddressRoute,
+  },
+  {
+    path: "/otp-token",
+    route: otpTokenRoute,
+  },
 ];
 
 // routes available only in development mode only

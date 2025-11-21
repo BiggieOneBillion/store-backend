@@ -4,6 +4,7 @@ const { tokenTypes } = require("../../../config/tokens");
 const { userService } = require("../user/index");
 const { tokenService } = require("../token/index");
 const Token = require("../token/token.model");
+const bcrypt = require("bcryptjs");
 
 /**
  * Login with username and password
@@ -17,24 +18,50 @@ const loginUserWithEmailAndPassword = async (email, password) => {
   if (!newUser || !(await newUser.isPasswordMatch(password))) {
     throw new ApiError(httpStatus.UNAUTHORIZED, "Incorrect email or password");
   }
-  return newUser;
+  return await userService.updateUserLoggedOutState(newUser.id, false);
+  // return newUser;
 };
+
+/**
+ * Update the isLoggedOut state
+ * @param {boolean} isLoggedOut
+ * @param {string} userId
+ * @returns {Promise<User>}
+ */
 
 /**
  * Logout
  * @param {string} refreshToken
  * @returns {Promise}
  */
-const logout = async (refreshToken) => {
-  const refreshTokenDoc = await Token.findOne({
-    token: refreshToken,
-    type: tokenTypes.REFRESH,
-    blacklisted: false,
-  });
-  if (!refreshTokenDoc) {
+const logout = async (refreshToken, userId) => {
+  const user = await userService.getUserById(userId);
+
+  if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, "Not found");
   }
-  await refreshTokenDoc.remove();
+
+  if (user.isLoggedOut) {
+    return { message: "User already logged out" };
+  }
+
+  // return {message: "Logout successful"};
+
+  const tokenDetails = await tokenService.verifyToken(
+    refreshToken,
+    tokenTypes.REFRESH
+  );
+
+  if (!tokenDetails) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid Token");
+  }
+
+  if (!(user.id.toString() === tokenDetails.user.toString())) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid Request");
+  }
+
+  await userService.updateUserLoggedOutState(tokenDetails.user, true);
+  await tokenService.deleteToken(tokenDetails.id);
 };
 
 /**
@@ -43,19 +70,38 @@ const logout = async (refreshToken) => {
  * @returns {Promise<Object>}
  */
 const refreshAuth = async (refreshToken) => {
+  // console.log("REFRESH TOKEN", refreshToken);
   try {
     const refreshTokenDoc = await tokenService.verifyToken(
       refreshToken,
       tokenTypes.REFRESH
     );
-    const newUser = await userService.getUserById(refreshTokenDoc.user);
-    if (!newUser) {
-      throw new Error();
+
+    if (!refreshTokenDoc) {
+      throw new ApiError(httpStatus.UNAUTHORIZED, "Please authenticate oo");
     }
-    await refreshTokenDoc.remove();
+
+    // console.log("REFRESH TOKEN DOC", refreshTokenDoc);
+
+    const newUser = await userService.getUserById(refreshTokenDoc.user);
+
+    // console.log("NEW USER", newUser);
+
+    if (!newUser) {
+      throw new ApiError(httpStatus.UNAUTHORIZED, "Please authenticate ii");
+    }
+
+    if (newUser.isLoggedOut) {
+      //! checks if the user is logged out by checking the isLoggedOut state, if so then they cannot generate any more token.
+      throw new ApiError(httpStatus.NOT_ACCEPTABLE, "User already logged out");
+    }
+
+    await tokenService.deleteToken(refreshTokenDoc.id);
+
+    // console.log("GENERATING NEW TOKENS");
     return tokenService.generateAuthTokens(newUser);
   } catch (error) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, "Please authenticate");
+    throw new ApiError(httpStatus.UNAUTHORIZED, "Please authenticate 55");
   }
 };
 
@@ -75,8 +121,9 @@ const resetPassword = async (resetPasswordToken, newPassword) => {
     if (!newUser) {
       throw new Error();
     }
+    const hashPassword = await bcrypt.hash(newPassword, 8);
     await userService.updateUserById(newUser.id, {
-      password: newPassword,
+      password: hashPassword,
     });
     await Token.deleteMany({
       user: newUser.id,

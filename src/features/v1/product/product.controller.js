@@ -28,15 +28,28 @@ const createProduct = catchAsync(async (req, res) => {
 });
 
 const getProducts = catchAsync(async (req, res) => {
-  const filter = pick(req.query, [
-    "name",
-    "category",
-    "store",
-    "status",
-    "price",
-  ]);
-  const options = pick(req.query, ["sortBy", "limit", "page"]);
-  const result = await productService.queryProducts(filter, options);
+  // const filter = pick(req.query, [
+  //   "name",
+  //   "category",
+  //   "store",
+  //   "status",
+  //   "price",
+  // ]);
+  // const options = pick(req.query, ["sortBy", "limit", "page"]);
+  // const result = await productService.queryProducts(filter, options);
+  // const result = await productService.filterProducts(req);
+  // res.send({
+  //   page: result.page,
+  //   limit: result.limit,
+  //   totalPages: result.totalPages,
+  //   totalResults: result.totalDocs,
+  //   items: result.docs,
+  //   hasNextPage: result.hasNextPage,
+  //   hasPrevPage: result.hasPrevPage,
+  //   nextPage: result.nextPage,
+  //   prevPage: result.prevPage,
+  // });
+  const result = await productService.partialFilteringOfProducts(req);
   res.send(result);
 });
 

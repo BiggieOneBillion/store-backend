@@ -21,7 +21,7 @@ const paystackService = {
           email: getUser.email,
           amount: orderData.total * 100,
           reference: `PAY-${Date.now()}-${Math.floor(Math.random() * 1000000)}`,
-          callback_url: config.paystack.callbackUrl,
+          callback_url: config.paystack.callbackUrl,//check the packback url
           metadata: {
             orderId: orderData._id || orderData.id,
             userId: userId,

@@ -51,6 +51,26 @@ const getUserByEmail = async (email) => {
   return User.findOne({ email });
 };
 
+const updateUserLoggedOutState = async (userId, isLoggedOut) => {
+  const updated = await User.findByIdAndUpdate(
+    userId,
+    {
+      $set: { isLoggedOut }
+    },
+    {
+      new: true,          // return updated doc
+      runValidators: true,
+      context: "query",
+    }
+  );
+
+  if (!updated) {
+    throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+  }
+
+  return updated;
+};
+
 /**
  * Update user by id
  * @param {ObjectId} userId
@@ -65,9 +85,24 @@ const updateUserById = async (userId, updateBody) => {
   if (updateBody.email && (await User.isEmailTaken(updateBody.email, userId))) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Email already taken");
   }
-  Object.assign(user, updateBody);
-  await user.save();
-  return user;
+
+  // console.log("UPDATED BODY", updateBody);
+
+  const updated = await User.findByIdAndUpdate(
+    userId,
+    { $set: updateBody },
+    {
+      new: true, // return the updated document
+      runValidators: true, // schema validation
+      context: "query", // needed for some validators
+    }
+  );
+
+  if (!updated) {
+    throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+  }
+  // await user.save();
+  return updated;
 };
 
 /**
@@ -92,4 +127,5 @@ module.exports = {
   updateUserById,
   deleteUserById,
   getAllUsers,
+  updateUserLoggedOutState
 };

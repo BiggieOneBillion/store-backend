@@ -1,28 +1,28 @@
-const express = require('express');
-const auth = require('../../../middlewares/auth');
-const validate = require('../../../middlewares/validate');
-const stockHistoryController = require('./stockHistory.controller');
-const stockHistoryValidation = require('./stockHistory.validation');
+const express = require("express");
+const { auth } = require("../../../middlewares/auth");
+const validate = require("../../../middlewares/validate");
+const stockHistoryController = require("./stockHistory.controller");
+const stockHistoryValidation = require("./stockHistory.validation");
 
 const router = express.Router();
 
 router
-  .route('/')
+  .route("/")
   .post(
-    auth('manageUsers'),
+    auth("jwt", "manageUsers"),
     validate(stockHistoryValidation.createStockEntry),
     stockHistoryController.createStockEntry
   )
   .get(
-    auth('manageUsers'),
+    auth("jwt", "manageUsers"),
     validate(stockHistoryValidation.getStockHistory),
     stockHistoryController.getStockHistory
   );
 
 router
-  .route('/product/:productId')
+  .route("/product/:productId")
   .get(
-    auth('manageUsers'),
+    auth("jwt", "manageUsers"),
     validate(stockHistoryValidation.getProductStockHistory),
     stockHistoryController.getProductStockHistory
   );

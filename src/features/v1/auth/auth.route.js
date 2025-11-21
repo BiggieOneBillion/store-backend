@@ -1,7 +1,7 @@
 const express = require("express");
 const validate = require("../../../middlewares/validate");
 const { authController, authValidation } = require("./index");
-const auth = require("../../../middlewares/auth");
+const { auth } = require("../../../middlewares/auth");
 
 const router = express.Router();
 
@@ -10,11 +10,15 @@ router.post(
   validate(authValidation.register),
   authController.register
 );
+
+router.get("/status", auth(), authController.loginStatus);
+
 router.post("/login", validate(authValidation.login), authController.login);
 router.post("/logout", validate(authValidation.logout), authController.logout);
 router.post(
   "/refresh-tokens",
   validate(authValidation.refreshTokens),
+  auth("jwt-refresh"),
   authController.refreshTokens
 );
 router.post(

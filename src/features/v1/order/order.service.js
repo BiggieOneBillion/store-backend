@@ -18,6 +18,7 @@ const generateReferenceId = (type) => {
 const createOrder = async (orderBody) => {
   // Verify products exist and have sufficient inventory
   const productArr = [];
+  const totalPriceProductArr = [];
   for (const item of orderBody.items) {
     const singleProduct = await productService.getProductById(item.product);
     if (!singleProduct) {
@@ -43,12 +44,35 @@ const createOrder = async (orderBody) => {
       quantity: item.quantity,
       price: singleProduct.price,
     });
+
+    totalPriceProductArr.push({
+      // we would use this array to calculate the total price
+      price: singleProduct.price,
+      quantity: item.quantity,
+      discount: singleProduct.discount || null,
+    });
   }
 
-  let orderTotal = productArr.reduce(
-    (acc, item) => acc + item.price * item.quantity,
+  let orderTotal = totalPriceProductArr.reduce(
+    // (acc, item) => acc + item.price * item.quantity,
+    (total, item) => {
+      if (item.discount?.active) {
+        const price = item.discount.type === "percentage";
+        if (price) {
+          const itemPrice =
+            item.price - item.price * (item.discount.value / 100);
+          return total + itemPrice * item.quantity;
+        } else {
+          const itemPrice = item.price - item.discount.value;
+          return total + itemPrice * item.quantity;
+        }
+      }
+      return total + item.price * item.quantity;
+    },
     0
   );
+
+  // console.log("TOTAL PRICE WITH DISCOUNT APPLIED", orderTotal);
 
   // Apply discount if code provided
   let discountDetails = null;
@@ -247,10 +271,10 @@ const getUserOrder = async (id) => {
       path: "items.product",
       select: "name images price description",
     })
-    .populate({
-      path: "items.store",
-      select: "name logo description",
-    })
+    // .populate({
+    //   path: "items.store",
+    //   select: "name logo description",
+    // })
     .select([
       "payment.amount",
       "payment.gateway",

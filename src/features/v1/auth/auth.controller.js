@@ -2,8 +2,7 @@ const httpStatus = require("http-status");
 const catchAsync = require("../../../utils/catchAsync");
 const emailService = require("../email/email.service");
 const { authService } = require("./index");
-const { token, user, store } = require("../index");
-const {storeService}  = require('../store/index')
+const { storeService } = require("../store/index");
 const { userService } = require("../user/index");
 const { tokenService } = require("../token/index");
 const { storeDefaults } = require("../../../utils/default");
@@ -16,19 +15,44 @@ const register = catchAsync(async (req, res) => {
   //     owner: newUser._id,
   //   });
   // }
+  // Set httpOnly, secure, and sameSite cookie for CSRF protection
+  res.cookie("user-authenticated", "true", {
+    // httpOnly: true,
+    secure: process.env.NODE_ENV === "production", // only send cookie over HTTPS in production
+    // sameSite: "strict", // helps protect against CSRF
+    maxAge: 24 * 60 * 60 * 1000, // 1 day
+  });
+
   const tokens = await tokenService.generateAuthTokens(newUser);
-  res.status(httpStatus.CREATED).send({ newUser, tokens });
+
+  const newUserInfo = {
+    id: newUser.id,
+    name: newUser.name,
+    role: newUser.role,
+    email: newUser.email,
+  };
+
+  res.status(httpStatus.CREATED).send({ newUser: newUserInfo, tokens });
 });
 
 const login = catchAsync(async (req, res) => {
   const { email, password } = req.body;
   const user = await authService.loginUserWithEmailAndPassword(email, password);
   const tokens = await tokenService.generateAuthTokens(user);
+
+  // Set httpOnly, secure, and sameSite cookie for CSRF protection
+  res.cookie("user-authenticated", "true", {
+    // httpOnly: true,
+    secure: process.env.NODE_ENV === "production", // only send cookie over HTTPS in production
+    // sameSite: "strict", // helps protect against CSRF
+    maxAge: 24 * 60 * 60 * 1000, // 1 day
+  });
+
   res.send({ user, tokens });
 });
 
 const logout = catchAsync(async (req, res) => {
-  await authService.logout(req.body.refreshToken);
+  await authService.logout(req.body.refresh, req.body.userId);
   res.status(httpStatus.NO_CONTENT).send();
 });
 
@@ -38,8 +62,9 @@ const refreshTokens = catchAsync(async (req, res) => {
 });
 
 const forgotPassword = catchAsync(async (req, res) => {
-  const resetPasswordToken =
-    await tokenService.generateResetPasswordToken(req.body.email);
+  const resetPasswordToken = await tokenService.generateResetPasswordToken(
+    req.body.email
+  );
   await emailService.sendResetPasswordEmail(req.body.email, resetPasswordToken);
   res.status(httpStatus.NO_CONTENT).send();
 });
@@ -62,6 +87,10 @@ const verifyEmail = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const loginStatus = catchAsync(async (req, res) => {
+  res.status(httpStatus.OK).send();
+});
+
 module.exports = {
   register,
   login,
@@ -71,4 +100,5 @@ module.exports = {
   resetPassword,
   sendVerificationEmail,
   verifyEmail,
+  loginStatus,
 };

@@ -55,7 +55,7 @@ const categoryValidation = {
         name: Joi.string(),
         slug: Joi.string(),
         description: Joi.string(),
-        parent: Joi.string().custom(objectId),
+        parent: Joi.string().custom(objectId).optional(),
         imageFile: Joi.array()
           .items(Joi.any().meta({ swaggerType: "file" }))
           .optional(),

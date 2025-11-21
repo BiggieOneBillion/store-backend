@@ -1,5 +1,5 @@
 const express = require("express");
-const auth = require("../../../middlewares/auth");
+const { auth } = require("../../../middlewares/auth");
 const validate = require("../../../middlewares/validate");
 const discountValidation = require("./discount.validation");
 const discountController = require("./discount.controller");
@@ -10,12 +10,12 @@ const router = express.Router();
 router
   .route("/")
   .post(
-    auth("manageUsers"),
+    auth("jwt", "manageUsers"),
     validate(discountValidation.createDiscount),
     discountController.createDiscount
   )
   .get(
-    auth("manageUsers"),
+    auth("jwt", "manageUsers"),
     validate(discountValidation.getDiscounts),
     discountController.getAllDiscounts
   );
@@ -23,20 +23,20 @@ router
 router
   .route("/:discountId")
   .patch(
-    auth("manageUsers"),
+    auth("jwt", "manageUsers"),
     validate(discountValidation.updateDiscount),
     discountController.updateDiscount
   )
   .delete(
-    auth("manageUsers"),
+    auth("jwt", "manageUsers"),
     validate(discountValidation.deleteDiscount),
     discountController.deleteDiscount
   );
 
 router
-  .route('/:discountId/status')
+  .route("/:discountId/status")
   .patch(
-    auth('manageUsers'),
+    auth("jwt", "manageUsers"),
     validate(discountValidation.updateDiscountStatus),
     discountController.updateDiscountStatus
   );
@@ -45,7 +45,7 @@ router
 router
   .route("/product/:productId")
   .post(
-    auth("manageUsers"),
+    auth("jwt", "manageUsers"),
     validate(discountValidation.applyProductDiscount),
     discountController.applyProductDiscount
   );
@@ -53,7 +53,7 @@ router
 router
   .route("/product/:productId/variant/:variantId")
   .post(
-    auth("manageUsers"),
+    auth("jwt", "manageUsers"),
     validate(discountValidation.applyVariantDiscount),
     discountController.applyVariantDiscount
   );
@@ -61,7 +61,7 @@ router
 router
   .route("/category/:category")
   .post(
-    auth("manageUsers"),
+    auth("jwt", "manageUsers"),
     validate(discountValidation.applyCategoryDiscount),
     discountController.applyCategoryDiscount
   );

@@ -15,6 +15,7 @@ const { errorConverter, errorHandler } = require("./middlewares/error");
 const ApiError = require("./utils/ApiError");
 const fileUpload = require("express-fileupload");
 const deviceDetector = require("./middlewares/deviceDetector");
+const registerPassport = require("./config/passport");
 // const formidableMiddleware = require("./middlewares/formiableMiddleware");
 
 const app = express();
@@ -67,7 +68,9 @@ app.use(deviceDetector);
 
 // jwt authentication
 app.use(passport.initialize());
-passport.use("jwt", jwtStrategy);
+// passport.use("jwt", jwtStrategy);
+// IMPORTANT: register BEFORE mounting routes
+registerPassport(passport);
 
 // limit repeated failed requests to auth endpoints
 if (config.env === "production") {

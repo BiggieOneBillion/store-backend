@@ -1,5 +1,5 @@
 const express = require("express");
-const auth = require("../../../middlewares/auth");
+const { auth } = require("../../../middlewares/auth");
 const validate = require("../../../middlewares/validate");
 const validateFormData = require("../../../middlewares/validateFormData");
 const { storeValidation, storeController } = require("./index");
@@ -10,19 +10,19 @@ router
   .route("/:userId")
   .post(
     // create a new store
-    auth("getUsers"),
+    auth("jwt","getUsers"),
     validate(storeValidation.createStore),
     storeController.createStore
   )
   .get(
     // get a particular user store
-    auth("getUsers"),
+    auth("jwt","getUsers"),
     validate(storeValidation.getStore),
     storeController.getStore
   )
   .patch(
     // update a particular user store
-    auth("getUsers"),
+    auth("jwt","getUsers"),
     validateFormData(storeValidation.updateStore),
     storeController.updateStore
   );
