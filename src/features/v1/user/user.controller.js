@@ -26,6 +26,15 @@ const getAllUsers = catchAsync(async (req, res) => {
   res.send(users);
 });
 
+const getUserRole = catchAsync(async (req, res) => {
+  
+  const role = await userService.getUserRoleById(req.params.userId);
+  if (!role) {
+    throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+  }
+  res.send({ role });
+});
+
 const getUser = catchAsync(async (req, res) => {
   const user = await userService.getUserById(req.params.userId);
   if (!user) {
@@ -101,4 +110,5 @@ module.exports = {
   getUser,
   updateUser,
   deleteUser,
+  getUserRole
 };

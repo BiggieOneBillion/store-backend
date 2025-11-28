@@ -51,6 +51,23 @@ const getUserByEmail = async (email) => {
   return User.findOne({ email });
 };
 
+// get user role using user id
+/**
+ * Update user's isLoggedOut state by id
+ * @param {ObjectId} userId
+ * @param {Role}  role
+ * @returns {Promise<User>}
+ */
+
+const getUserRoleById = async (userId) => {
+  const user = await getUserById(userId);
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+  }
+  return user.role;
+};
+
+
 const updateUserLoggedOutState = async (userId, isLoggedOut) => {
   const updated = await User.findByIdAndUpdate(
     userId,
@@ -127,5 +144,6 @@ module.exports = {
   updateUserById,
   deleteUserById,
   getAllUsers,
-  updateUserLoggedOutState
+  updateUserLoggedOutState,
+  getUserRoleById
 };

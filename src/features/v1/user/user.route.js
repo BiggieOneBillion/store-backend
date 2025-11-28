@@ -36,6 +36,12 @@ router
     userController.deleteUser
   );
 
+router.route("/:userId/role").get(
+  auth("jwt", "getUsers"),
+  validate(userValidation.getUserRole),
+  userController.getUserRole
+);
+
 module.exports = router;
 
 /**
