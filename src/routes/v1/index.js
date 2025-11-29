@@ -14,6 +14,7 @@ const categoryRoute = require("../../features/v1/category/category.route");
 const stockHistoryRoute = require("../../features/v1/inventory/stockHistory.route");
 const userAddressRoute = require("../../features/v1/useraddress/useraddress.route");
 const otpTokenRoute = require("../../features/v1/otp-token/otp-token.route");
+const auditRoute = require("../../features/v1/audit/audit.route");
 
 const router = express.Router();
 
@@ -69,6 +70,10 @@ const defaultRoutes = [
   {
     path: "/otp-token",
     route: otpTokenRoute,
+  },
+  {
+    path: "/audit",
+    route: auditRoute,
   },
 ];
 

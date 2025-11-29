@@ -72,6 +72,10 @@ app.use(passport.initialize());
 // IMPORTANT: register BEFORE mounting routes
 registerPassport(passport);
 
+// Enable audit logging for all authenticated routes
+const auditLogger = require("./middlewares/auditLogger");
+app.use(auditLogger());
+
 // limit repeated failed requests to auth endpoints
 if (config.env === "production") {
   app.use("/v1/auth", authLimiter);
