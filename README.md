@@ -1,10 +1,10 @@
 # Multi-Store E-Commerce Backend
 
-A robust, production-ready RESTful API backend for a multi-store e-commerce platform built with Node.js, Express, and MongoDB.
+A robust, production-ready RESTful API backend for an e-commerce platform built with Node.js, Express, and MongoDB.
 
 ## 🚀 Overview
 
-This platform allows multiple sellers to manage independent stores while providing buyers with a seamless shopping experience across all stores. It features role-based access control, secure payment integration, and a modular architecture.
+This platform allows buyers a seamless shopping experience. It features role-based access control, secure payment integration, and a modular architecture.
 
 ## 📚 Documentation
 
@@ -19,7 +19,7 @@ Detailed documentation is available in the [`docs`](./docs/README.md) directory:
 ### Architecture & Design
 - **[Architecture](./docs/02-architecture.md)**: System design and patterns
 - **[System Flow](./docs/03-system-flow.md)**: Request processing and logic flows
-- **[User Flows](./docs/04-user-flows.md)**: Buyer, seller, and admin journeys
+- **[User Flows](./docs/04-user-flows.md)**: Buyer journeys
 - **[Data Models](./docs/06-data-models.md)**: Database schemas and entities
 
 ### API & Integration
