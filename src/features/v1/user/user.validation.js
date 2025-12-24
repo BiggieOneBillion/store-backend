@@ -1,5 +1,8 @@
 const Joi = require("joi");
-const { password, objectId } = require("../../../validations/custom.validation");
+const {
+  password,
+  objectId,
+} = require("../../../validations/custom.validation");
 
 const createUser = {
   body: Joi.object().keys({
@@ -37,18 +40,25 @@ const updateUser = {
       name: Joi.string(),
       // role: Joi.string().valid("user", "admin"),
       phoneNumber: Joi.string(),
-      address: {
-        street: Joi.string(),
-        city: Joi.string(),
-        state: Joi.string(),
-        zipCode: Joi.string(),
-        country: Joi.string(),
-      },
+      token: Joi.string().optional(), // for re-authentication
+      // address: {
+      //   street: Joi.string(),
+      //   city: Joi.string(),
+      //   state: Joi.string(),
+      //   zipCode: Joi.string(),
+      //   country: Joi.string(),
+      // },
     })
     .min(1),
 };
 
 const deleteUser = {
+  params: Joi.object().keys({
+    userId: Joi.string().custom(objectId),
+  }),
+};
+
+const getUserRole =  {
   params: Joi.object().keys({
     userId: Joi.string().custom(objectId),
   }),
@@ -60,4 +70,5 @@ module.exports = {
   getUser,
   updateUser,
   deleteUser,
+  getUserRole
 };

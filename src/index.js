@@ -2,10 +2,19 @@ const mongoose = require('mongoose');
 const app = require('./app');
 const config = require('./config/config');
 const logger = require('./config/logger');
+const { initializeDatabase } = require("./utils/dbInit");
+const { initializeAuditCronJobs } = require("./features/v1/audit/audit.cron");
 
 let server;
 mongoose.connect(config.mongoose.url, config.mongoose.options).then(() => {
-  logger.info('Connected to MongoDB');
+  logger.info("Connected to MongoDB");
+  
+  // Initialize database (create default admin if needed)
+  initializeDatabase().then(() => {
+    // Initialize audit cron jobs after database is ready
+    initializeAuditCronJobs();
+  });
+  
   server = app.listen(config.port, () => {
     logger.info(`Listening to port ${config.port}`);
   });

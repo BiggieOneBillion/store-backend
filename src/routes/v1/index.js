@@ -7,7 +7,14 @@ const { storeRoute } = require("../../features/v1/store/index");
 const { productRoute } = require("../../features/v1/product/index");
 const { wishlistRoute } = require("../../features/v1/wishlist/index");
 const { orderRoute } = require("../../features/v1/order/index");
+const paymentRoute = require("../../features/v1/payment/payment.route");
 const paystackRoute = require("../../features/v1/payment/paystack/paystack.route");
+const discountRoute = require("../../features/v1/discount/discount.route");
+const categoryRoute = require("../../features/v1/category/category.route");
+const stockHistoryRoute = require("../../features/v1/inventory/stockHistory.route");
+const userAddressRoute = require("../../features/v1/useraddress/useraddress.route");
+const otpTokenRoute = require("../../features/v1/otp-token/otp-token.route");
+const auditRoute = require("../../features/v1/audit/audit.route");
 
 const router = express.Router();
 
@@ -39,6 +46,34 @@ const defaultRoutes = [
   {
     path: "/order",
     route: orderRoute,
+  },
+  {
+    path: "/payment",
+    route: paymentRoute,
+  },
+  {
+    path: "/discount",
+    route: discountRoute,
+  },
+  {
+    path: "/categories",
+    route: categoryRoute,
+  },
+  {
+    path: "/stock-history",
+    route: stockHistoryRoute,
+  },
+  {
+    path: "/user-address",
+    route: userAddressRoute,
+  },
+  {
+    path: "/otp-token",
+    route: otpTokenRoute,
+  },
+  {
+    path: "/audit",
+    route: auditRoute,
   },
 ];
 

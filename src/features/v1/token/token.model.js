@@ -20,6 +20,7 @@ const tokenSchema = mongoose.Schema(
         tokenTypes.REFRESH,
         tokenTypes.RESET_PASSWORD,
         tokenTypes.VERIFY_EMAIL,
+        tokenTypes.ACCESS,
       ],
       required: true,
     },

@@ -48,16 +48,21 @@ const userSchema = mongoose.Schema(
       default: false,
     },
     phoneNumber: { type: String, required: false },
-    address: {
-      type: {
-        street: { type: String },
-        city: { type: String },
-        state: { type: String },
-        country: { type: String },
-        zipCode: { type: String },
-      },
-      default: undefined, // Address field is optional
+    isLoggedOut: {
+      type: Boolean,
+      required: true,
+      default: true,
     },
+    // address: {
+    //   type: {
+    //     street: { type: String },
+    //     city: { type: String },
+    //     state: { type: String },
+    //     country: { type: String },
+    //     zipCode: { type: String },
+    //   },
+    //   default: undefined, // Address field is optional
+    // },
   },
   {
     timestamps: true,

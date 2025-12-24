@@ -14,7 +14,7 @@ const createProduct = catchAsync(async (req, res) => {
     }
     const product = await productService.createProduct({
       ...req.body,
-      store: req.store._id,
+      // store: req.store._id,
       images: [upload.secure_url],
     });
     res.status(httpStatus.CREATED).send(product);
@@ -22,31 +22,44 @@ const createProduct = catchAsync(async (req, res) => {
   }
   const product = await productService.createProduct({
     ...req.body,
-    store: req.store._id,
+    // store: req.store._id,
   });
   res.status(httpStatus.CREATED).send(product);
 });
 
 const getProducts = catchAsync(async (req, res) => {
-  const filter = pick(req.query, [
-    "name",
-    "category",
-    "store",
-    "status",
-    "price",
-  ]);
-  const options = pick(req.query, ["sortBy", "limit", "page"]);
-  const result = await productService.queryProducts(filter, options);
+  // const filter = pick(req.query, [
+  //   "name",
+  //   "category",
+  //   "store",
+  //   "status",
+  //   "price",
+  // ]);
+  // const options = pick(req.query, ["sortBy", "limit", "page"]);
+  // const result = await productService.queryProducts(filter, options);
+  // const result = await productService.filterProducts(req);
+  // res.send({
+  //   page: result.page,
+  //   limit: result.limit,
+  //   totalPages: result.totalPages,
+  //   totalResults: result.totalDocs,
+  //   items: result.docs,
+  //   hasNextPage: result.hasNextPage,
+  //   hasPrevPage: result.hasPrevPage,
+  //   nextPage: result.nextPage,
+  //   prevPage: result.prevPage,
+  // });
+  const result = await productService.partialFilteringOfProducts(req);
   res.send(result);
 });
 
 const getAllProducts = catchAsync(async (req, res) => {
-  const products = await productService.getAllProducts(req.store._id);
+  const products = await productService.getAllProducts();
   res.send(products);
 });
 
 const getAllStoreProducts = catchAsync(async (req, res) => {
-  const products = await productService.getAllStoreProducts()
+  const products = await productService.getAllStoreProducts();
   res.send(products);
 });
 
@@ -58,6 +71,15 @@ const getProduct = catchAsync(async (req, res) => {
   res.send(product);
 });
 
+const getRelatedProducts = catchAsync(async (req, res) => {
+  const products = await productService.getRelatedProducts(
+    req.params.categoryId, // note this is the category id not the name
+    req.params.productId
+  );
+  // console.log(products)
+  res.send(products);
+});
+
 const updateProduct = catchAsync(async (req, res) => {
   const product = await productService.updateProductById(
     req.params.productId,
@@ -67,6 +89,7 @@ const updateProduct = catchAsync(async (req, res) => {
 });
 
 const deleteProduct = catchAsync(async (req, res) => {
+  // console.log("ASS HOLE PROGRAM")
   await productService.deleteProductById(req.params.productId);
   res.status(httpStatus.NO_CONTENT).send();
 });
@@ -78,5 +101,6 @@ module.exports = {
   updateProduct,
   deleteProduct,
   getAllProducts,
-  getAllStoreProducts
+  getAllStoreProducts,
+  getRelatedProducts,
 };

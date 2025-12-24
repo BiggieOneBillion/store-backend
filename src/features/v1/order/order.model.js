@@ -10,11 +10,11 @@ const orderSchema = mongoose.Schema({
         ref: "Product",
         required: true,
       },
-      store: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Store",
-        required: true,
-      },
+      // store: {
+      //   type: mongoose.Schema.Types.ObjectId,
+      //   ref: "Store",
+      //   required: true,
+      // },
       quantity: { type: Number, required: true },
       price: { type: Number, required: true },
       variant: {
@@ -60,9 +60,16 @@ const orderSchema = mongoose.Schema({
     country: String,
     zipCode: String,
   },
+  appliedDiscount: {
+    code: { type: String },
+    type: { type: String, enum: ['percentage', 'fixed'] },
+    value: { type: Number },
+    amount: { type: Number }, // actual amount discounted
+    discountId: { type: mongoose.Schema.Types.ObjectId, ref: 'Discount' }
+  },
+  
   subtotal: { type: Number, required: false },
-  shippingCost: { type: Number, required: false },
-  tax: { type: Number, required: false },
+  discountedTotal: { type: Number }, // New field for post-discount total
   total: { type: Number, required: false },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },

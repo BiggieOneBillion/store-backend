@@ -38,7 +38,7 @@ const saveToken = async (token, userId, expires, type, blacklisted = false) => {
   const tokenDoc = await Token.create({
     token,
     user: userId,
-    expires: expires.toDate(),
+    expires: expires,
     type,
     blacklisted,
   });
@@ -93,7 +93,7 @@ const generateAuthTokens = async (user) => {
   await saveToken(
     refreshToken,
     user.id,
-    refreshTokenExpires,
+    refreshTokenExpires.unix(),
     tokenTypes.REFRESH
   );
 
@@ -156,6 +156,15 @@ const generateVerifyEmailToken = async (user) => {
   return verifyEmailToken;
 };
 
+/**
+ * delete token
+ * @param {Token id} id
+ * @returns {Promise<string>}
+ */
+const deleteToken = async (id) => {
+  return await Token.findByIdAndDelete(id);
+};
+
 module.exports = {
   generateToken,
   saveToken,
@@ -163,4 +172,5 @@ module.exports = {
   generateAuthTokens,
   generateResetPasswordToken,
   generateVerifyEmailToken,
+  deleteToken,
 };

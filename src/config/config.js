@@ -31,6 +31,9 @@ const envVarsSchema = Joi.object()
     EMAIL_FROM: Joi.string().description(
       "the from field in the emails sent by the app"
     ),
+    DEFAULT_ADMIN_EMAIL: Joi.string().email().description("Default admin email"),
+    DEFAULT_ADMIN_PASSWORD: Joi.string().description("Default admin password"),
+    DEFAULT_ADMIN_NAME: Joi.string().description("Default admin name"),
     PAYSTACK_SECRET_KEY: Joi.string().description("paystack secret key"),
     PAYSTACK_PUBLIC_KEY: Joi.string().description("paystack public key"),
     PAYSTACK_CALLBACK_URL: Joi.string().description("paystack callback url"),
@@ -50,11 +53,7 @@ module.exports = {
   port: envVars.PORT,
   mongoose: {
     url: envVars.MONGODB_URL + (envVars.NODE_ENV === "test" ? "-test" : ""),
-    options: {
-      useCreateIndex: true,
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    },
+    options: {},
   },
   jwt: {
     secret: envVars.JWT_SECRET,
@@ -78,6 +77,15 @@ module.exports = {
   paystack: {
     secretKey: envVars.PAYSTACK_SECRET_KEY,
     publicKey: envVars.PAYSTACK_PUBLIC_KEY,
-    callbackUrl: envVars.PAYSTACK_CALLBACK_URL,
+  },
+  cloudinary: {
+    cloudName: envVars.CLOUDINARY_CLOUD_NAME,
+    apiKey: envVars.CLOUDINARY_API_KEY,
+    apiSecret: envVars.CLOUDINARY_API_SECRET,
+  },
+  defaultAdmin: {
+    email: envVars.DEFAULT_ADMIN_EMAIL || 'admin@example.com',
+    password: envVars.DEFAULT_ADMIN_PASSWORD || 'Admin@123456',
+    name: envVars.DEFAULT_ADMIN_NAME || 'System Administrator',
   },
 };

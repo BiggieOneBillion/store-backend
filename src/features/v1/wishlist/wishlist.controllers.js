@@ -14,6 +14,8 @@ const addToWishlist = catchAsync(async (req, res) => {
 
 const getWishlists = catchAsync(async (req, res) => {
   const result = await wishlistService.getUserWishlist(req.user._id);
+
+  // console.log("WISHLIST RESULT ----------------", result);
   //   const filter = pick(req.query, ["user", "store"]);
   //   const options = pick(req.query, ["sortBy", "limit", "page"]);
   //   const result = await wishlistService.queryWishlists(filter, options);
@@ -32,13 +34,13 @@ const removeFromWishlist = catchAsync(async (req, res) => {
   const wishlist = await wishlistService.removeFromWishlist(
     req.user.id,
     req.params.productId,
-    req.params.storeId
+    // req.params.storeId
   );
   res.send(wishlist);
 });
 
 const clearWishlist = catchAsync(async (req, res) => {
-
+  //  console.log("------------PASSES-------------")
   await wishlistService.clearWishlist(req.user._id);
   res.status(httpStatus.NO_CONTENT).send();
 });

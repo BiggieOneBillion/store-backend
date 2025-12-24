@@ -7,7 +7,7 @@ const { uploadImage } = require("../storage/cloudinary.service");
 
 // Store Controllers
 const createStore = catchAsync(async (req, res) => {
-  console.log(req.files);
+  // console.log(req.files);
 
   const store = await storeService.createStore({
     ...req.body,

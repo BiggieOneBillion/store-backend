@@ -13,6 +13,10 @@ const queryPayments = async (filter, options) => {
   return payments;
 };
 
+const getAllPayments = async (id) => {
+  return Payment.find();
+};
+
 const getPaymentById = async (id) => {
   return Payment.findById(id);
 };
@@ -43,4 +47,5 @@ module.exports = {
   getPaymentById,
   updatePaymentById,
   deletePaymentById,
+  getAllPayments
 };

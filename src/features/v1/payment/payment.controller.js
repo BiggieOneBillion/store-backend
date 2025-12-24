@@ -25,6 +25,11 @@ const getPayment = catchAsync(async (req, res) => {
   res.send(payment);
 });
 
+const getAllPayments = catchAsync(async (req, res) => {
+  const payments = await paymentService.getAllPayments();
+  res.send(payments);
+});
+
 const updatePayment = catchAsync(async (req, res) => {
   const payment = await paymentService.updatePaymentById(
     req.params.paymentId,
@@ -44,4 +49,5 @@ module.exports = {
   getPayment,
   updatePayment,
   deletePayment,
+  getAllPayments
 };

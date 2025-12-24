@@ -38,6 +38,10 @@ const getUserById = async (id) => {
   return User.findById(id);
 };
 
+const getAllUsers = async () => {
+  return User.find({ role: "buyer" });
+};
+
 /**
  * Get user by email
  * @param {string} email
@@ -45,6 +49,43 @@ const getUserById = async (id) => {
  */
 const getUserByEmail = async (email) => {
   return User.findOne({ email });
+};
+
+// get user role using user id
+/**
+ * Update user's isLoggedOut state by id
+ * @param {ObjectId} userId
+ * @param {Role}  role
+ * @returns {Promise<User>}
+ */
+
+const getUserRoleById = async (userId) => {
+  const user = await getUserById(userId);
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+  }
+  return user.role;
+};
+
+
+const updateUserLoggedOutState = async (userId, isLoggedOut) => {
+  const updated = await User.findByIdAndUpdate(
+    userId,
+    {
+      $set: { isLoggedOut }
+    },
+    {
+      new: true,          // return updated doc
+      runValidators: true,
+      context: "query",
+    }
+  );
+
+  if (!updated) {
+    throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+  }
+
+  return updated;
 };
 
 /**
@@ -61,9 +102,24 @@ const updateUserById = async (userId, updateBody) => {
   if (updateBody.email && (await User.isEmailTaken(updateBody.email, userId))) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Email already taken");
   }
-  Object.assign(user, updateBody);
-  await user.save();
-  return user;
+
+  // console.log("UPDATED BODY", updateBody);
+
+  const updated = await User.findByIdAndUpdate(
+    userId,
+    { $set: updateBody },
+    {
+      new: true, // return the updated document
+      runValidators: true, // schema validation
+      context: "query", // needed for some validators
+    }
+  );
+
+  if (!updated) {
+    throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+  }
+  // await user.save();
+  return updated;
 };
 
 /**
@@ -87,4 +143,7 @@ module.exports = {
   getUserByEmail,
   updateUserById,
   deleteUserById,
+  getAllUsers,
+  updateUserLoggedOutState,
+  getUserRoleById
 };

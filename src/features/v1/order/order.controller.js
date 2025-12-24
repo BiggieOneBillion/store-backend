@@ -7,7 +7,17 @@ const { storeService } = require("../store/index");
 
 // Order Controllers
 const createOrder = catchAsync(async (req, res) => {
-  const newOrder = await orderService.createOrder({
+  let newOrder;
+  if (req.deviceInfo.isMobile) {
+    newOrder = await orderService.createOrderfromMobile({
+      ...req.body,
+      buyer: req.user.id,
+    });
+    res.status(httpStatus.CREATED).send(newOrder);
+    return;
+  }
+  console.log("CREATE ORDER DETAILS---", req.body);
+  newOrder = await orderService.createOrder({
     ...req.body,
     buyer: req.user.id,
   });
@@ -18,6 +28,12 @@ const getOrders = catchAsync(async (req, res) => {
   const filter = pick(req.query, ["buyer", "status", "store"]);
   const options = pick(req.query, ["sortBy", "limit", "page"]);
   const result = await orderService.queryOrders(filter, options);
+  res.send(result);
+});
+
+const getAllOrder = catchAsync(async (req, res) => {
+  const result = await orderService.getAllOrder();
+  // console.log("---RESULTS---", result);
   res.send(result);
 });
 
@@ -38,7 +54,6 @@ const getAllOrdersByStore = catchAsync(async (req, res) => {
 });
 
 const getOrder = catchAsync(async (req, res) => {
-
   const singleOrder = await orderService.getOrderById(req.params.orderId);
   if (!singleOrder) {
     throw new ApiError(httpStatus.NOT_FOUND, "Order not found");
@@ -47,7 +62,7 @@ const getOrder = catchAsync(async (req, res) => {
 });
 
 const getUserOrderList = catchAsync(async (req, res) => {
-  console.log("-------------request-------------", req.user._id)
+  // console.log("-------------request-------------", req.user._id)
   const getUserOrders = await orderService.getUserOrder(req.user._id);
   if (!getUserOrders) {
     throw new ApiError(httpStatus.NOT_FOUND, "Order not found");
@@ -76,5 +91,6 @@ module.exports = {
   updateOrder,
   deleteOrder,
   getAllOrdersByStore,
-  getUserOrderList
+  getUserOrderList,
+  getAllOrder,
 };

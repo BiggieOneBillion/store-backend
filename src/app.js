@@ -14,6 +14,8 @@ const routes = require("./routes/v1");
 const { errorConverter, errorHandler } = require("./middlewares/error");
 const ApiError = require("./utils/ApiError");
 const fileUpload = require("express-fileupload");
+const deviceDetector = require("./middlewares/deviceDetector");
+const registerPassport = require("./config/passport");
 // const formidableMiddleware = require("./middlewares/formiableMiddleware");
 
 const app = express();
@@ -53,11 +55,26 @@ app.use(compression());
 // enable cors
 app.use(cors());
 app.options("*", cors());
-
+// app.use(cors({
+//   origin: '*',
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+//   allowedHeaders: ['Content-Type', 'Authorization'],
+//   credentials: true,
+//   exposedHeaders: ['Content-Range', 'X-Content-Range']
+// }));
+// app.options('*', cors());
+// detect device
+app.use(deviceDetector);
 
 // jwt authentication
 app.use(passport.initialize());
-passport.use("jwt", jwtStrategy);
+// passport.use("jwt", jwtStrategy);
+// IMPORTANT: register BEFORE mounting routes
+registerPassport(passport);
+
+// Enable audit logging for all authenticated routes
+const auditLogger = require("./middlewares/auditLogger");
+app.use(auditLogger());
 
 // limit repeated failed requests to auth endpoints
 if (config.env === "production") {
