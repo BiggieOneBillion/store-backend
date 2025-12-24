@@ -13,6 +13,19 @@ Welcome to the comprehensive documentation for the Multi-Store E-Commerce Backen
    - Installation and setup
    - Quick start guide
 
+2. **[Getting Started](./getting-started.md)**
+   - Prerequisites
+   - Detailed installation steps
+   - Running development/production modes
+
+3. **[Tech Stack](./tech-stack.md)**
+   - Detailed technology breakdown
+   - Rationale for choices
+
+4. **[Environment Variables](./environment-variables.md)**
+   - Complete configuration reference
+   - Required and optional variables
+
 ### Architecture & Design
 
 2. **[Architecture](./02-architecture.md)**
@@ -42,15 +55,12 @@ Welcome to the comprehensive documentation for the Multi-Store E-Commerce Backen
 
 5. **[API Endpoints](./05-api-endpoints.md)**
    - Complete endpoint reference
-   - Authentication endpoints
-   - User management
-   - Store operations
-   - Product management
-   - Order processing
-   - Payment endpoints
-   - Discount system
-   - Category management
    - Request/Response examples
+
+6. **[API Usage Guide](./api-usage-guide.md)**
+   - Practical workflow examples
+   - Authentication step-by-step
+   - Common query parameters
 
 6. **[Data Models](./06-data-models.md)**
    - Database schema documentation
@@ -83,13 +93,17 @@ Welcome to the comprehensive documentation for the Multi-Store E-Commerce Backen
 
 9. **[Deployment](./09-deployment.md)**
    - Environment configuration
-   - MongoDB setup
    - PM2 process management
    - Nginx configuration
    - SSL certificates
-   - Monitoring and logging
-   - Production checklist
-   - Troubleshooting
+
+10. **[Render Deployment](./deployment-render.md)**
+    - Hosting on Render
+    - MongoDB Atlas setup
+
+11. **[Netlify Guide](./deployment-netlify.md)**
+    - Serverless architecture
+    - Limitations and alternatives
 
 ## 🚀 Quick Links
 
